@@ -28,5 +28,5 @@ jobs:
           workflow-name: nx-pipeline
       - run:
           command: npx nx run-many --targets=build --all
-          name: Run Builds
+          name: Builds
 workflows: null
