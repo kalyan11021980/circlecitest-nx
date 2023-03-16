@@ -6,11 +6,11 @@ jobs:
     docker:
       - image: 'cimg/node:14.17-browsers'
     environment:
-      MAIN_BRANCH_NAME: main
+      MAIN_BRANCH_NAME: master
     steps:
       - checkout
       - run:
-          command: yarn install --frozen-lockfile
+          command: npm install
           name: Install dependencies
       - nx/set-shas:
           allow-on-hold-workflow: true
@@ -18,9 +18,9 @@ jobs:
           main-branch-name: master
           workflow-name: nx-pipeline
       - run:
-          command: yarn nx affected --target=build --base=$NX_BASE
+          command: npx nx affected --target=build --base=$NX_BASE
           name: Run Builds
       - run:
-          command: yarn nx affected --target=test --base=$NX_BASE
+          command: npx nx affected --target=test --base=$NX_BASE
           name: Run Unit Tests
 workflows: null
