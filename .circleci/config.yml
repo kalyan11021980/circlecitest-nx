@@ -16,12 +16,9 @@ jobs:
       - nx/set-shas:
           allow-on-hold-workflow: true
           error-on-no-successful-workflow: true
-          main-branch-name: master
+          main-branch-name: main
           workflow-name: nx-pipeline
       - run:
-          command: npx nx affected:build --base= origin/main
+          command: npx nx run-many --targets=build --all
           name: Run Builds
-      - run:
-          command: npx nx affected:build --base= origin/main
-          name: Run Unit Tests
 workflows: null
