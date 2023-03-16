@@ -18,9 +18,9 @@ jobs:
           main-branch-name: master
           workflow-name: nx-pipeline
       - run:
-          command: npx nx affected --target=build --base=main
+          command:nx affected:build --base= origin/main --head=$PR_BRANCH_NAME
           name: Run Builds
       - run:
-          command: npx nx affected --target=test --base=main
+          command: nx affected:build --base= origin/main --head=$PR_BRANCH_NAME
           name: Run Unit Tests
 workflows: null
