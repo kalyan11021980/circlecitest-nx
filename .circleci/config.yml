@@ -6,7 +6,8 @@ jobs:
     docker:
       - image: 'cimg/node:14.17-browsers'
     environment:
-      MAIN_BRANCH_NAME: master
+      MAIN_BRANCH_NAME: main
+      NX_HEAD: origin/main
     steps:
       - checkout
       - run:
