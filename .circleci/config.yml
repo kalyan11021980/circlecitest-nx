@@ -1,24 +1,20 @@
-version: '2.1'
+version: 2.1
 orbs:
-  nx: nrwl/nx@1.6.1
+  nx: nrwl/nx@1.5.1
 jobs:
-  build:
+  main:
     docker:
-      - image: 'cimg/node:14.17-browsers'
-    environment:
-      MAIN_BRANCH_NAME: main
-      NX_HEAD: origin/main
+      - image: cimg/node:lts-browsers
     steps:
       - checkout
-      - run:
-          command: npm install
-          name: Install dependencies
-      - nx/set-shas:
-          allow-on-hold-workflow: true
-          error-on-no-successful-workflow: true
-          main-branch-name: main
-          workflow-name: nx-pipeline
-      - run:
-          command: npx nx run-many --targets=build --all
-          name: Run Builds
-workflows: null
+      - run: npm ci
+      - nx/set-shas
+
+      - run: npx nx format:check
+      - run: npx nx affected --base=$NX_BASE --head=$NX_HEAD --target=lint --parallel=3
+      - run: npx nx affected --base=$NX_BASE --head=$NX_HEAD --target=test --parallel=3 --configuration=ci
+      - run: npx nx affected --base=$NX_BASE --head=$NX_HEAD --target=build --parallel=3
+workflows:
+  build:
+    jobs:
+      - main
