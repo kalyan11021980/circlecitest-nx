@@ -15,7 +15,7 @@ describe('AppService', () => {
 
   describe('getData', () => {
     it('should return "Welcome to nesttest!"', () => {
-      expect(service.getData()).toEqual({ message: 'Welcome to nesttest!' });
+      expect(service.getData()).toEqual({ message: 'Welcome to circlecitest!' });
     });
   });
 });
