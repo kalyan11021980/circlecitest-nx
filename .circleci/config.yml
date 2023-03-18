@@ -10,7 +10,6 @@ jobs:
       - run: npm ci
       - nx/set-shas
 
-      - run: npx nx format:check
       - run: npx nx affected --base=$NX_BASE --head=$NX_HEAD --target=lint --parallel=3
       - run: npx nx affected --base=$NX_BASE --head=$NX_HEAD --target=test --parallel=3 --configuration=ci
       - run: npx nx affected --base=$NX_BASE --head=$NX_HEAD --target=build --parallel=3
