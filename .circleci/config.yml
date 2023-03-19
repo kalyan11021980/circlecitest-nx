@@ -33,7 +33,11 @@ workflows:
   version: 2
   build-and-deploy:
     jobs:
+<<<<<<< HEAD
       - build
       - dockerize:
           requires:
             - build
+=======
+      - main
+>>>>>>> 690fe28f5ae3b6466d4d3b9a60182db36caacee2
