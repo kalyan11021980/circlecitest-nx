@@ -10,7 +10,6 @@ jobs:
       name: node/default
     steps:
       - checkout
-      - node/with-cache:
           steps:
             - run: npm ci
             - run: npx nx affected:build --base=origin/main
