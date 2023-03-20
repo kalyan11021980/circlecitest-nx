@@ -10,6 +10,9 @@ jobs:
       - image: cimg/node:lts-browsers
     steps:
       - checkout
+      - setup_remote_docker:
+          version: 20.10.14
+          docker_layer_caching: true
       - run: npm ci
       - run:
           name: Get list of affected apps
