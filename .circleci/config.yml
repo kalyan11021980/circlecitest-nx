@@ -1,19 +1,49 @@
 version: 2.1
+
 orbs:
   nx: nrwl/nx@1.5.1
-jobs:
-  main:
+  docker: circleci/docker@1.7.0
+
+executors:
+  node-executor:
     docker:
-      - image: cimg/node:lts-browsers
+      - image: circleci/node:14-buster
+
+jobs:
+  build_and_deploy:
+    executor: node-executor
     steps:
       - checkout
-      - run: npm ci
-      - nx/set-shas
-
+      - node/install-packages
+      
+      - run:
+          name: Get list of affected apps
+          command: echo 'export AFFECTED_APPS=$(npx nx print-affected --base=$NX_BASE --head=$NX_HEAD --select=projects)' >> $BASH_ENV
+          when: always
+      
       - run: npx nx affected --base=$NX_BASE --head=$NX_HEAD --target=lint --parallel=3
       - run: npx nx affected --base=$NX_BASE --head=$NX_HEAD --target=test --parallel=3 --configuration=ci
       - run: npx nx affected --base=$NX_BASE --head=$NX_HEAD --target=build --parallel=3
+      
+      - run:
+          name: Dockerize and deploy affected apps
+          command: |
+            source $BASH_ENV
+            if [ -n "$AFFECTED_APPS" ]; then
+              for app in $(echo $AFFECTED_APPS | sed "s/,/ /g")
+              do
+                echo "Dockerizing $app"
+                mkdir -p docker/$app/dist/apps
+                cp -R dist/apps/$app docker/$app/dist/apps
+                cp package.json yarn.lock docker/$app/
+                cp apps/$app/Dockerfile docker/$app/
+                docker build -t $DOCKER_USERNAME/$app:latest docker/$app
+                echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+                docker push $DOCKER_USERNAME/$app:latest
+              done
+            fi
 workflows:
-  build:
+  version: 2
+  build_deploy:
     jobs:
-      - main
+      - build_and_deploy
