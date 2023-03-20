@@ -4,18 +4,13 @@ orbs:
   nx: nrwl/nx@1.5.1
   docker: circleci/docker@1.7.0
 
-executors:
-  node-executor:
-    docker:
-      - image: circleci/node:14-buster
-
 jobs:
   build_and_deploy:
-    executor: node-executor
+    docker:
+      - image: cimg/node:lts-browsers
     steps:
       - checkout
-      - node/install-packages
-      
+      - run: npm ci
       - run:
           name: Get list of affected apps
           command: echo 'export AFFECTED_APPS=$(npx nx print-affected --base=$NX_BASE --head=$NX_HEAD --select=projects)' >> $BASH_ENV
