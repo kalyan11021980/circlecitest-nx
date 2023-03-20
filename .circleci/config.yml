@@ -32,9 +32,9 @@ jobs:
                 cp -R dist/apps/$app docker/$app/dist/apps
                 cp package.json docker/$app/
                 cp apps/$app/Dockerfile docker/$app/
-                docker build -t $DOCKER_USERNAME/$app:latest docker/$app
+                docker build -t kalyan11021980/$app:latest docker/$app
                 echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
-                docker push $DOCKER_USERNAME/$app:latest
+                docker push kalyan11021980/$app:latest
               done
             fi
 workflows:
