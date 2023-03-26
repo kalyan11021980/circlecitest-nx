@@ -17,7 +17,7 @@ jobs:
       - run:
           name: Set base and head references
           command: |
-             if [ "$(git rev-parse --abbrev-ref HEAD)" = "main" ]; then
+            if [ "$(git rev-parse --abbrev-ref HEAD)" = "main" ]; then
               echo 'export NX_BASE=$(git rev-parse HEAD~1)' >> $BASH_ENV
             else
               echo 'export NX_BASE=origin/main' >> $BASH_ENV
