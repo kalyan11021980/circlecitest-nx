@@ -17,7 +17,11 @@ jobs:
       - run:
           name: Set base and head references
           command: |
-            echo 'export NX_BASE=origin/main' >> $BASH_ENV
+             if [ "$(git rev-parse --abbrev-ref HEAD)" = "main" ]; then
+              echo 'export NX_BASE=$(git rev-parse HEAD~1)' >> $BASH_ENV
+            else
+              echo 'export NX_BASE=origin/main' >> $BASH_ENV
+            fi
             echo 'export NX_HEAD=HEAD' >> $BASH_ENV
       - run:
           name: Get list of affected apps
