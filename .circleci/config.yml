@@ -16,7 +16,7 @@ workflows:
   build:
     jobs:
       - main
-      triggers:
+    triggers:
       - push:
           branches:
             - main
