@@ -15,14 +15,19 @@ jobs:
           docker_layer_caching: true
       - run: npm ci
       - run:
+          name: Set base and head references
+          command: |
+            echo 'export NX_BASE=origin/main' >> $BASH_ENV
+            echo 'export NX_HEAD=HEAD' >> $BASH_ENV
+      - run:
           name: Get list of affected apps
           command: echo 'export AFFECTED_APPS=$(npx nx print-affected --base=$NX_BASE --head=$NX_HEAD --select=projects)' >> $BASH_ENV
           when: always
-      
+
       - run: npx nx affected --base=$NX_BASE --head=$NX_HEAD --target=lint --parallel=3
       - run: npx nx affected --base=$NX_BASE --head=$NX_HEAD --target=test --parallel=3 --configuration=ci
       - run: npx nx affected --base=$NX_BASE --head=$NX_HEAD --target=build --parallel=3
-      
+
       - run:
           name: Dockerize and deploy affected apps
           command: |
