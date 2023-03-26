@@ -9,7 +9,7 @@ export class MetricsService implements OnModuleInit {
         @Inject(METRICS_MODULE_OPTIONS) private readonly options: MetricsModuleOptions,
     ){}
     onModuleInit() {
-        console.log(this.options);
+        console.log('kalyan', this.options);
     }
 
     private setMetricsConfigurations() {
