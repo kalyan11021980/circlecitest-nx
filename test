@@ -1,0 +1,73 @@
+const { InfluxDB, Point } = require('@influxdata/influxdb-client');
+
+// Define the InfluxDB connection parameters
+const url = 'http://localhost:8086'; // Replace with your InfluxDB URL
+const token = 'your-influxdb-token'; // Replace with your InfluxDB token
+const org = 'your-organization'; // Replace with your InfluxDB organization
+const bucket = 'your-bucket'; // Replace with your InfluxDB bucket
+
+// Function to send dynamic data to InfluxDB
+function sendDataToInflux(data) {
+  // Create an InfluxDB client instance
+  const client = new InfluxDB({ url, token });
+
+  // Create a write API instance
+  const writeApi = client.getWriteApi(org, bucket);
+
+  // Create a point with the dynamic data
+  const dataPoint = new Point('your-measurement') // Replace 'your-measurement' with the appropriate measurement name
+    .tag('id', data.id || '')
+    .tag('appname', data.appname || '')
+    .stringField('url', data.info && data.info.url ? data.info.url : '')
+    .stringField('referrer', data.info && data.info.referrer ? data.info.referrer : '')
+    .stringField('userAgent', data.info && data.info.userAgent ? data.info.userAgent : '')
+    .floatField('memory', data.info && data.info.memory ? data.info.memory : 0)
+    .intField('cpus', data.info && data.info.cpus ? data.info.cpus : 0)
+    .tag('connection', data.info && data.info.connection && data.info.connection.effectiveType ? data.info.connection.effectiveType : '')
+    .intField('rtt', data.info && data.info.connection && data.info.connection.rtt ? data.info.connection.rtt : 0)
+    .floatField('downlink', data.info && data.info.connection && data.info.connection.downlink ? data.info.connection.downlink : 0)
+    .intField('LCP', data.LCP || 0)
+    .intField('FID', data.FID || 0)
+    .intField('INP', data.INP || 0)
+    .floatField('CLS', data.CLS || 0)
+    .intField('duration', data.duration || 0)
+    .tag('LCPScore', data.LCPScore || '')
+    .tag('FIDScore', data.FIDScore || '')
+    .tag('CLSScore', data.CLSScore || '');
+
+  // Write the data point to InfluxDB
+  writeApi.writePoint(dataPoint);
+
+  // Close the write API
+  writeApi.close()
+    .then(() => {
+      console.log('Data written to InfluxDB');
+    })
+    .catch((error) => {
+      console.error(`Error writing to InfluxDB: ${error}`);
+    });
+}
+
+// Example of dynamic data object with missing fields
+const dynamicData = {
+  "id": "v1-1697475979816-7090390318368",
+  "appname": "extracare",
+  "info": {
+    "url": "http://localhost:4200/extracare/home/",
+    "referrer": "http://localhost:4200/extracare/home/",
+    "userAgent": "Mozilla/5.0",
+    "memory": 8,
+    "cpus": 16,
+    "connection": {
+      "effectiveType": "4g",
+      "rtt": 50,
+      "downlink": 6.75
+    }
+  },
+  "LCP": 1088,
+  "FID": 24,
+  // INP, CLS, duration, LCPScore, FIDScore, and CLSScore are missing
+};
+
+// Call the function with your dynamic data
+sendDataToInflux(dynamicData);
